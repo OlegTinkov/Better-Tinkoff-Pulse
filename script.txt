@@ -69,7 +69,7 @@
             if ( nickname !== "undefined" ){
                 for (let i = 0; i < BLACK_LIST_USERS.length; i += 1) {
                     if ( nickname === BLACK_LIST_USERS[i] ){
-                        console.log("hiding from " + nickname);
+                        console.log("post form " + nickname + " was hidden");
                         $(this).css( "height", "1px" );
                         $(this).css( "overflow", "hidden" );
                         $(this).css( "opacity", "0.1" );
