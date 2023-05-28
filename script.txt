@@ -90,7 +90,6 @@
                     $(this).attr("tickers", "1");
                     $(this).addClass("tickers", "1");
                     $(this).find(".src-modules-Pulse-components-User-UserInfo-UserInfo-nickname-2VMhL").append( " " + tickers_cnt + " тикеров" );
-                    $(this).find(".src-modules-Pulse-components-Post-Header-PostHeader-header-3mgIF").off("click").click(function() { alert("click") });
                 }
             }
         })
