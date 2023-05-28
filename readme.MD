@@ -1,5 +1,8 @@
 Better Tinkoff Pulse
 
+- скрывает посты с большим числом тикеров
+- черный список авторов
+
 1. Установить расширение для Chrome "Tampermonkey".
 https://chrome.google.com/webstore/detail/tampermonkey/dhdgffkkebhmkfjojejmpbldmpobfkfo
 
