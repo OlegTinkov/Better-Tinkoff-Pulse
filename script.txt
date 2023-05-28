@@ -37,7 +37,6 @@
         if ( !$("#betterPulseButton").length ){
             $(".pro-tab-filter").each( function(){
                 if ( $(this).attr("aria-controls") == "pro-tab-panel_undefined_all" ){
-                    console.log("insert button");
                     var betterPulseButtonText = status_disabled ? "Скрывать" : "Не скрывать";
                     $('<div id="betterPulseButton" class="pro-tab pro-tab-filter" data-tab-id="all" role="tab" tabindex="0" data-qa-tag="tabTitle"><span class="pro-tab-title">'+ betterPulseButtonText +'</span></div>').insertAfter( this );
                     $("#betterPulseButton").click( function(){
@@ -70,7 +69,7 @@
             if ( nickname !== "undefined" ){
                 for (let i = 0; i < BLACK_LIST_USERS.length; i += 1) {
                     if ( nickname === BLACK_LIST_USERS[i] ){
-                        //console.log("hiding from " + nickname);
+                        console.log("hiding from " + nickname);
                         $(this).css( "height", "1px" );
                         $(this).css( "overflow", "hidden" );
                         $(this).css( "opacity", "0.1" );
