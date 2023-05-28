@@ -1,0 +1,103 @@
+// ==UserScript==
+// @name         Better Tinkoff Pulse
+// @namespace    http://tampermonkey.net/
+// @version      0.1
+// @description  Пульс в Терминале: скрывает посты с большим числом тикеров; черный список авторов.
+// @author       Oleg Tinkov
+// @match        https://www.tinkoff.ru/terminal/
+// @icon         data:image/gif;base64,R0lGODlhAQABAAAAACH5BAEKAAEALAAAAAABAAEAAAICTAEAOw==
+// @grant        none
+// @require      https://cdn.bootcss.com/jquery/3.4.1/jquery.min.js
+// ==/UserScript==
+
+(function() {
+    'use strict';
+
+    /**
+        Настройки
+    */
+
+    // Сколько тикеров для скрытия поста
+    const TICKERS_COUNT_TO_DELETE = 3;
+
+    // Черный список никнеймов
+    const BLACK_LIST_USERS = [
+        "PREMIUM_FREE",
+        "SpeedyRacer",
+        "Sochenko_trade"
+    ];
+
+    /**
+        Код
+    */
+
+    var status_disabled = false;
+
+    function work(){
+        if ( !$("#betterPulseButton").length ){
+            $(".pro-tab-filter").each( function(){
+                if ( $(this).attr("aria-controls") == "pro-tab-panel_undefined_all" ){
+                    console.log("insert button");
+                    var betterPulseButtonText = status_disabled ? "Скрывать" : "Не скрывать";
+                    $('<div id="betterPulseButton" class="pro-tab pro-tab-filter" data-tab-id="all" role="tab" tabindex="0" data-qa-tag="tabTitle"><span class="pro-tab-title">'+ betterPulseButtonText +'</span></div>').insertAfter( this );
+                    $("#betterPulseButton").click( function(){
+                        if ( !status_disabled ){
+                            $(".tickers").css("height", "auto").css("opacity", "1").css("overflow", "auto");
+                            status_disabled = true;
+                            $("#betterPulseButton span").text("Скрывать");
+                            console.log("betterPulse disabled");
+                        }
+                        else{
+                            $(".tickers").css("height", "60px").css("opacity", "0.3").css("overflow", "hidden");
+                            status_disabled = false;
+                            $("#betterPulseButton span").text("Не скрывать");
+                            console.log("betterPulse enabled");
+                        }
+                    });
+
+                    return;
+                }
+            });
+        }
+
+        $(".src-components-VirtualList-VirtualList-list_wrapper-3fLNJ > div").each(function( index ){
+            if (  $(this).attr("tickers") === "1" || $(this).attr("blocked") === "1" ){
+                return;
+            }
+
+            // Blacklist
+            var nickname = $(this).find(".src-modules-Pulse-components-User-UserInfo-UserInfo-nickname-2VMhL").html();
+            if ( nickname !== "undefined" ){
+                for (let i = 0; i < BLACK_LIST_USERS.length; i += 1) {
+                    if ( nickname === BLACK_LIST_USERS[i] ){
+                        //console.log("hiding from " + nickname);
+                        $(this).css( "height", "1px" );
+                        $(this).css( "overflow", "hidden" );
+                        $(this).css( "opacity", "0.1" );
+                        $(this).attr("blocked", "1");
+                        return;
+                    }
+                }
+            }
+
+            // Hide with many tickers
+            if ( !status_disabled ){
+                var tickers_cnt = $(this).find(".src-components-Tickers-Tickers-logos-1oaKZ > div").length;
+                if ( tickers_cnt >= TICKERS_COUNT_TO_DELETE ){
+                    $(this).css( "height", "60px" );
+                    $(this).css( "overflow", "hidden" );
+                    $(this).css( "opacity", "0.3" );
+                    $(this).attr("tickers", "1");
+                    $(this).addClass("tickers", "1");
+                    $(this).find(".src-modules-Pulse-components-User-UserInfo-UserInfo-nickname-2VMhL").append( " " + tickers_cnt + " тикеров" );
+                    $(this).find(".src-modules-Pulse-components-Post-Header-PostHeader-header-3mgIF").off("click").click(function() { alert("click") });
+                }
+            }
+        })
+    }
+
+    $(document).ready(function(){
+        setInterval( work, 50 );
+    })
+
+})();
