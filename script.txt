@@ -1,13 +1,13 @@
 // ==UserScript==
 // @name         Better Tinkoff Pulse
 // @namespace    http://tampermonkey.net/
-// @version      0.1
+// @version      0.2
 // @description  Пульс в Терминале: скрывает посты с большим числом тикеров; черный список авторов.
 // @author       Oleg Tinkov
 // @match        https://www.tinkoff.ru/terminal/
 // @icon         data:image/gif;base64,R0lGODlhAQABAAAAACH5BAEKAAEALAAAAAABAAEAAAICTAEAOw==
 // @grant        none
-// @require      https://cdn.bootcss.com/jquery/3.4.1/jquery.min.js
+// @require      https://code.jquery.com/jquery-3.7.0.min.js
 // ==/UserScript==
 
 (function() {
@@ -59,13 +59,16 @@
             });
         }
 
-        $(".src-components-VirtualList-VirtualList-list_wrapper-3fLNJ > div").each(function( index ){
+        $("div[data-test-id='virtuoso-item-list'] > div").each(function( index ){
             if (  $(this).attr("tickers") === "1" || $(this).attr("blocked") === "1" ){
                 return;
             }
 
+            //console.log("found post to check");
+
             // Blacklist
-            var nickname = $(this).find(".src-modules-Pulse-components-User-UserInfo-UserInfo-nickname-2VMhL").html();
+            var div_nickname = $(this).find("div[class^='src-modules-Pulse-components-User-UserInfo-UserInfo-nickname']");
+            var nickname = div_nickname.html();
             if ( nickname !== "undefined" ){
                 for (let i = 0; i < BLACK_LIST_USERS.length; i += 1) {
                     if ( nickname === BLACK_LIST_USERS[i] ){
@@ -81,14 +84,22 @@
 
             // Hide with many tickers
             if ( !status_disabled ){
-                var tickers_cnt = $(this).find(".src-components-Tickers-Tickers-logos-1oaKZ > div").length;
+                var tickers_cnt = $(this).find("div[class^='src-components-Tickers-Tickers-logos'] > div").length;
                 if ( tickers_cnt >= TICKERS_COUNT_TO_DELETE ){
                     $(this).css( "height", "60px" );
                     $(this).css( "overflow", "hidden" );
                     $(this).css( "opacity", "0.3" );
                     $(this).attr("tickers", "1");
                     $(this).addClass("tickers", "1");
-                    $(this).find(".src-modules-Pulse-components-User-UserInfo-UserInfo-nickname-2VMhL").append( " " + tickers_cnt + " тикеров" );
+
+                    var plus_cnt = $(this).find("div[class^='src-components-Tickers-Tickers-restNumber']").html();
+                    if ( typeof plus_cnt !== "undefined" ){
+                        plus_cnt = Number( plus_cnt.replace('+','') );
+                        plus_cnt -= 1;
+                        tickers_cnt += plus_cnt;
+                    }
+
+                    div_nickname.append( " " + tickers_cnt + " тикеров" );
                 }
             }
         })
