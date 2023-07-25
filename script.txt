@@ -66,7 +66,7 @@
         }
 
         $("div[data-test-id='virtuoso-item-list'] > div").each(function( index ){
-            if (  $(this).attr("tickers") === "1" || $(this).attr("blocked") === "1" ){
+            if ( $(this).attr("tickers-betterpulse") === "1" || $(this).attr("blocked") === "1" ){
                 return;
             }
 
@@ -93,7 +93,7 @@
                     $(this).css( "height", "60px" );
                     $(this).css( "overflow", "hidden" );
                     $(this).css( "opacity", "0.3" );
-                    $(this).attr("tickers", "1");
+                    $(this).attr("tickers-betterpulse", "1");
                     $(this).addClass("tickers", "1");
 
                     var plus_cnt = $(this).find("div[class^='src-components-Tickers-Tickers-restNumber']").html();
