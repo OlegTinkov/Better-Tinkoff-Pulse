@@ -65,6 +65,14 @@
             });
         }
 
+        // Disable on News
+        var news_button = $("#betterPulseButton").next().attr("aria-selected");
+        if ( typeof news_button !== 'undefined' ){
+            if ( news_button == "true" ){
+                return;
+            }
+        }
+
         $("div[data-test-id='virtuoso-item-list'] > div").each(function( index ){
             if ( $(this).attr("tickers-betterpulse") === "1" || $(this).attr("blocked") === "1" ){
                 return;
